@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+import networkx as nx
 import sqlite3
 import json
 
@@ -27,7 +28,6 @@ def retrieve_network(id):
 
 def save_network(network_data):
     network_json = json.loads(network_data)
-
     network_id = network_json["network_id"]
     network_string = network_json["network"][0]
 
@@ -50,8 +50,11 @@ def save_network(network_data):
     network_string = json.dumps([ob.__dict__ for ob in node_list])
     conn = sqlite3.connect("network_storage.db")
     cur = conn.cursor()
-    cur.execute("INSERT INTO networks(id, network) VALUES (?, ?)", (network_id, network_string))
-    conn.commit()
+    try:
+        cur.execute("INSERT INTO networks(id, network) VALUES (?, ?)", (network_id, network_string))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        print("Non-Unique Network ID used")
 
 @app.get("/networks/{network_id}")
 async def get_network(network_id: int):
@@ -63,4 +66,5 @@ async def get_network(network_id: int):
 
 @app.post("/networks/")
 async def post_network(request: Request):
-    return await request.body()
+    save_network(await request.body())
+    return request.body
