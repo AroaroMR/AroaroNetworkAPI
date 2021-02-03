@@ -57,7 +57,7 @@ def save_network(network_data):
         print("Non-Unique Network ID used")
 
 @app.get("/networks/{network_id}")
-async def get_network(network_id: int):
+async def get_network(network_id: str):
     try:
         network_json = retrieve_network(network_id)
         return network_json
