@@ -33,7 +33,7 @@ def save_network(network_data):
 
     g = nx.node_link_graph(network_string)
 
-    degree_dict = nx.degree_centrality(g)
+    degree_dict = dict(g.degree())
     closeness_dict = nx.closeness_centrality(g)
     betweenness_dict = nx.betweenness_centrality(g)
 
