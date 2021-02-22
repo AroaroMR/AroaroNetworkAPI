@@ -59,6 +59,27 @@ def save_network(network_data):
     except sqlite3.IntegrityError:
         print("Non-Unique Network ID used")
 
+def retrieve_json(id):
+    conn = sqlite3.connect("json_storage.db")
+    cur = conn.cursor()
+    cur.execute("SELECT data FROM json WHERE id = ?", (id,))
+    json_string = cur.fetchone()[0]
+    conn.close()
+    return json.loads(json_string)
+
+def save_json(json_data):
+    json = json.loads(json_data)
+    id = json["id"]
+    data_string = json["data"][0]
+
+    conn = sqlite3.connect("json_storage.db")
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO json(id, data) VALUES (?, ?)", (id, data_string))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        print("Non-Unique JSON ID used")
+
 @app.get("/networks/{network_id}")
 async def get_network(network_id: str):
     try:
@@ -70,4 +91,17 @@ async def get_network(network_id: str):
 @app.post("/networks/")
 async def post_network(request: Request):
     save_network(await request.body())
+    return request.body
+
+@app.get("/json/{json_id}")
+async def get_json(json_id: str):
+    try:
+        json_data = retrieve_json(json_id)
+        return json_data
+    except TypeError:
+        pass
+
+@app.post("/json/")
+async def post_json(request: Request):
+    save_json(await request.body())
     return request.body
