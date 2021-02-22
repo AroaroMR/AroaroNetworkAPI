@@ -11,7 +11,8 @@ class Node:
         self.id = id
         self.degree = 0
         self.closeness = 0
-        self.betweenness =0
+        self.betweenness = 0
+        self.eigenvector = 0
 
 
 @app.get("/")
@@ -36,6 +37,7 @@ def save_network(network_data):
     degree_dict = nx.degree_centrality(g)
     closeness_dict = nx.closeness_centrality(g)
     betweenness_dict = nx.betweenness_centrality(g)
+    eigenvector_dict = nx.eigenvector_centrality(g)
 
     node_list = []
 
@@ -44,6 +46,7 @@ def save_network(network_data):
         temp_node.degree = degree_dict[node]
         temp_node.closeness = closeness_dict[node]
         temp_node.betweenness = betweenness_dict[node]
+        temp_node.eigenvector = eigenvector_dict[node]
         node_list.append(temp_node)
 
     node_list.sort(key=lambda x: x.id)
