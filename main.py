@@ -44,9 +44,9 @@ def save_network(network_data):
     for node in g.nodes:
         temp_node = Node(node)
         temp_node.degree = degree_dict[node]
-        temp_node.closeness = closeness_dict[node]
-        temp_node.betweenness = betweenness_dict[node]
-        temp_node.eigenvector = eigenvector_dict[node]
+        temp_node.closeness = round(closeness_dict[node], 4)
+        temp_node.betweenness = round(betweenness_dict[node], 4)
+        temp_node.eigenvector = round(eigenvector_dict[node], 4)
         node_list.append(temp_node)
 
     node_list.sort(key=lambda x: x.id)
